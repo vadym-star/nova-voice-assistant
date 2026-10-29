@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Nova</title>
+<style>
+  /* Liquid glass on a deep-sea navy, soft neon-mint accent. */
+  :root { --navy-0: #040b18; --navy-1: #071327; --navy-2: #0c1f3d; --text: #eef6ff; --muted: #8ea4c2;
+          --mint: #5cf2bd; --aqua: #46d7e6; --line: rgba(255,255,255,.10); --glass: rgba(255,255,255,.055);
+          --ok: #5cf2bd; --warn: #ffc56b; --bad: #ff7a8a; }
+  * { box-sizing: border-box; }
+  html { background: var(--navy-1); }
+  body { margin: 0; padding: 26px 22px 30px; color: var(--text); min-height: 100vh;
+    font: 14px/1.5 "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(70,215,230,.20), transparent 60%),
+      radial-gradient(700px 520px at -10% 30%, rgba(92,242,189,.13), transparent 60%),
+      radial-gradient(800px 600px at 60% 120%, rgba(43,111,214,.25), transparent 60%),
+      linear-gradient(180deg, var(--navy-1), var(--navy-0)); background-attachment: fixed; }
+  h1 { margin: 0 0 2px; font: 600 26px/1.2 "Segoe UI Variable Display", "Segoe UI", sans-serif;
+    display: flex; align-items: center; gap: 12px; letter-spacing: -.01em; }
+  .orb { width: 30px; height: 30px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 8%, rgba(255,255,255,0) 24%),
+      radial-gradient(circle at 70% 75%, rgba(70,215,230,.85), rgba(70,215,230,0) 55%),
+      radial-gradient(circle at 40% 45%, #7af7cd, #1fa784 58%, #0b3b48 100%);
+    box-shadow: 0 0 18px rgba(92,242,189,.45); }
+  .sub { color: var(--muted); margin: 0 0 22px 42px; }
+
+  .welcome-title { font-size: 15px; margin: 2px 0 14px; }
+  .langs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+  .langs button { padding: 12px 10px; font-size: 15px; border-radius: 14px; }
+  .langs button.on { border-color: rgba(92,242,189,.75); background: rgba(92,242,189,.12);
+    box-shadow: 0 0 0 3px rgba(92,242,189,.10); }
+  section { position: relative; background: linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.035));
+    border: 1px solid var(--line); border-radius: 20px; padding: 16px 20px; margin-bottom: 14px;
+    backdrop-filter: blur(24px) saturate(1.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 10px 30px rgba(0,0,0,.25); }
+  section::before { content: ""; position: absolute; left: 24px; right: 24px; top: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); }
+  section h2 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .14em; color: var(--mint);
+    margin: 0 0 10px; font-weight: 600; opacity: .9; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0;
+    border-top: 1px solid rgba(255,255,255,.05); }
+  section h2 + .row, .row:first-of-type { border-top: 0; }
+  .row > label:first-child, .row > span:first-child { flex: 1; min-width: 0; }
+  .hint { color: var(--muted); font-size: 12px; }
+
+  input[type=text], select { width: 196px; flex: none; padding: 7px 12px; font-size: 13.5px; border-radius: 12px; font: inherit; color: var(--text);
+    background: rgba(4,11,24,.55); border: 1px solid rgba(255,255,255,.12); outline: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.35); transition: border-color .15s, box-shadow .15s; }
+  input[type=text]:focus, select:focus { border-color: rgba(92,242,189,.6); box-shadow: 0 0 0 3px rgba(92,242,189,.15); }
+  select { appearance: none; -webkit-appearance: none; padding-right: 34px; text-overflow: ellipsis;
+    white-space: nowrap; overflow: hidden; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239db3cf' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 13px center; background-size: 11px 8px; }
+  select option { background: var(--navy-2); }
+  button { padding: 8px 15px; border-radius: 12px; font: inherit; color: var(--text); cursor: pointer;
+    white-space: nowrap; background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    border: 1px solid rgba(255,255,255,.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    transition: transform .08s, border-color .15s, background .15s; }
+  button:hover { border-color: rgba(92,242,189,.55); }
+  button:active { transform: scale(.97); }
+  button:disabled { opacity: .45; cursor: default; }
+  button.primary { color: #03241a; font-weight: 650; border-color: transparent;
+    background: linear-gradient(180deg, #8ff8d3, var(--mint)); box-shadow: 0 6px 22px rgba(92,242,189,.32),
+      inset 0 1px 0 rgba(255,255,255,.6); }
+
+  input[type=range] { width: 230px; accent-color: var(--mint); }
+  label.switch { position: relative; width: 38px; height: 22px; flex: none; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch span { position: absolute; inset: 0; border-radius: 22px; cursor: pointer; transition: .2s;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14); }
+  .switch span::before { content: ""; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px;
+    border-radius: 50%; background: #fff; transition: .22s cubic-bezier(.3,1.4,.6,1);
+    box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  .switch input:checked + span { background: linear-gradient(180deg, #7ef6cb, var(--mint)); border-color: transparent;
+    box-shadow: 0 0 14px rgba(92,242,189,.35); }
+  .switch input:checked + span::before { transform: translateX(16px); }
+
+  .providers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+  .provider { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 11px 13px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.12); cursor: pointer;
+    background: rgba(4,11,24,.35); transition: border-color .15s, background .15s, box-shadow .15s; }
+  .provider:hover { border-color: rgba(92,242,189,.35); }
+  .provider.on { border-color: rgba(92,242,189,.75); background: rgba(92,242,189,.08);
+    box-shadow: 0 0 0 3px rgba(92,242,189,.10), inset 0 1px 0 rgba(255,255,255,.12); }
+  .provider b { font-weight: 600; }
+  .provider b, .provider small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .provider small { color: var(--muted); font-size: 12px; }
+  .status { display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 14px; border-radius: 14px;
+    background: rgba(4,11,24,.45); border: 1px solid rgba(255,255,255,.10); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+  .dot.ok { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+  .dot.warn { background: var(--warn); box-shadow: 0 0 10px rgba(255,197,107,.6); }
+  .dot.bad { background: var(--bad); box-shadow: 0 0 10px rgba(255,122,138,.6); }
+  .status .text { flex: 1; min-width: 0; }
+  .status .text > div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status .text > #aiDetail { white-space: normal; overflow-wrap: anywhere; }  /* errors are read in full */
+  .cmd > div { min-width: 0; overflow-wrap: anywhere; }
+  .switch input:focus-visible + span, .provider:focus-visible, button:focus-visible {
+    outline: 2px solid rgba(92,242,189,.8); outline-offset: 2px; }
+  .status .actions { display: flex; gap: 6px; flex: none; }
+  .status .actions button { padding: 5px 11px; border-radius: 10px; font-size: 12.5px; }
+  .note { margin: 10px 2px 4px; line-height: 1.45; }
+
+  .cmd { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0;
+    border-top: 1px solid rgba(255,255,255,.06); }
+  .cmd:first-child { border-top: 0; }
+  .cmd small { color: var(--muted); display: block; }
+  .saved { margin-left: auto; font: 500 12.5px/1 "Segoe UI Variable Text", "Segoe UI", sans-serif; color: var(--mint);
+    padding: 6px 10px; border-radius: 999px; background: rgba(92,242,189,.10); opacity: 0;
+    transform: translateY(-3px); transition: opacity .25s, transform .25s; letter-spacing: 0; }
+  .saved.on { opacity: 1; transform: none; }
+  .saved.warn { color: var(--warn); background: rgba(255,197,107,.12); }
+  ::-webkit-scrollbar { width: 10px; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12);
+    border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
+</style>
+</head>
+<body>
+<h1><span class="orb"></span>Nova<span class="saved" id="saved"></span></h1>
+<div class="sub" data-i="subtitle"></div>
+
+<section id="welcome" class="welcome" hidden>
+  <h2>Nova</h2>
+  <div class="welcome-title">Choose a language · Выберите язык · 选择语言</div>
+  <div class="langs">
+    <button data-lang="ru">Русский</button>
+    <button data-lang="en">English</button>
+    <button data-lang="zh">中文</button>
+  </div>
+  <div class="hint" id="welcomeHint"></div>
+</section>
+
+<section>
+  <h2 data-i="assistant"></h2>
+  <div class="row"><label><span data-i="name"></span><div class="hint" data-i="name_hint"></div></label>
+    <input type="text" id="name"></div>
+  <div class="row"><label><span data-i="ui_lang"></span><div class="hint" data-i="ui_lang_hint"></div></label>
+    <select id="language"></select></div>
+  <div class="row"><label><span data-i="stt_lang"></span><div class="hint" data-i="stt_lang_hint"></div></label>
+    <select id="stt_language">
+      <option value="auto" data-i="any_lang"></option>
+      <option value="ru">Русский</option><option value="en">English</option><option value="zh">中文</option>
+      <option value="uk">Українська</option><option value="de">Deutsch</option><option value="es">Español</option>
+      <option value="fr">Français</option><option value="ja">日本語</option><option value="ko">한국어</option>
+    </select></div>
+  <div class="row"><label><span data-i="hotkey"></span><div class="hint" data-i="hotkey_hint"></div></label>
+    <button id="hotkeyBtn"></button></div>
+  <div class="row"><label data-i="hotkey_mode"></label>
+    <select id="hotkey_mode"><option value="hold" data-i="mode_hold"></option><option value="toggle" data-i="mode_toggle"></option></select></div>
+  <div class="row"><label><span data-i="wake"></span><div class="hint" data-i="wake_hint"></div></label>
+    <label class="switch"><input type="checkbox" id="wake_word_enabled"><span></span></label></div>
+  <div class="row"><label><span data-i="silence"></span><div class="hint" data-i="silence_hint"></div></label>
+    <select id="silence_timeout"><option value="3">3 s</option><option value="5">5 s</option>
+      <option value="8">8 s</option><option value="12">12 s</option></select></div>
+  <div class="row"><label data-i="overlay_style"></label>
+    <select id="overlay_style"><option value="full" data-i="os_full"></option><option value="orb" data-i="os_orb"></option></select></div>
+  <div class="row"><label data-i="overlay_position"></label>
+    <select id="overlay_position"><option value="top" data-i="op_top"></option><option value="bottom" data-i="op_bottom"></option></select></div>
+</section>
+
+<section>
+  <h2 data-i="ai"></h2>
+  <div class="providers">
+    <div class="provider" data-p="claude" role="button" tabindex="0"><b>Claude</b><small data-i="claude_sub"></small></div>
+    <div class="provider" data-p="codex" role="button" tabindex="0"><b>ChatGPT</b><small data-i="codex_sub"></small></div>
+    <div class="provider" data-p="off" role="button" tabindex="0"><b data-i="off"></b><small data-i="off_sub"></small></div>
+  </div>
+  <div id="aiBlock">
+    <div class="status">
+      <span class="dot" id="aiDot"></span>
+      <div class="text"><div id="aiTitle"></div><div class="hint" id="aiDetail"></div></div>
+      <div class="actions">
+        <button id="aiInstall" data-i="install"></button>
+        <button id="aiLogin"></button>
+        <button id="aiTest" data-i="test"></button>
+      </div>
+    </div>
+    <div class="hint note" data-i="ai_note"></div>
+    <div class="row" id="claudeModelRow"><label><span data-i="model"></span><div class="hint" data-i="haiku_hint"></div></label>
+      <select id="claude_model"><option value="haiku">Haiku</option><option value="sonnet">Sonnet</option><option value="opus">Opus</option></select></div>
+    <div class="row" id="codexModelRow"><label><span data-i="model"></span><div class="hint" data-i="codex_model_hint"></div></label>
+      <input type="text" id="codex_model" placeholder="gpt-5-mini"></div>
+  </div>
+</section>
+
+<section>
+  <h2 data-i="voice_section"></h2>
+  <div class="row"><label><span data-i="accuracy"></span><div class="hint" data-i="accuracy_hint"></div></label>
+    <select id="stt_model">
+      <option value="base" data-i="acc_base"></option><option value="small" data-i="acc_small"></option>
+      <option value="medium" data-i="acc_medium"></option><option value="large-v3-turbo" data-i="acc_large"></option>
+    </select></div>
+  <div class="row"><label data-i="device"></label>
+    <select id="stt_device"><option value="auto" data-i="dev_auto"></option><option value="cuda" data-i="dev_gpu"></option><option value="cpu" data-i="dev_cpu"></option></select></div>
+</section>
+
+<section>
+  <h2 data-i="behaviour"></h2>
+  <div class="row"><label data-i="confirm"></label>
+    <label class="switch"><input type="checkbox" id="confirm_dangerous"><span></span></label></div>
+  <div class="row"><label><span data-i="confirm_messages"></span><div class="hint" data-i="confirm_messages_hint"></div></label>
+    <select id="confirm_messages"><option value="unsure" data-i="cm_unsure"></option>
+      <option value="always" data-i="cm_always"></option><option value="never" data-i="cm_never"></option></select></div>
+  <div class="row"><label data-i="sounds"></label>
+    <label class="switch"><input type="checkbox" id="sounds"><span></span></label></div>
+  <div class="row"><label data-i="sound_style"></label>
+    <select id="sound_style"><option value="windows" data-i="ss_windows"></option>
+      <option value="ticks" data-i="ss_ticks"></option></select></div>
+  <div class="row"><label><span data-i="game_mode"></span><div class="hint" data-i="game_mode_hint"></div></label>
+    <label class="switch"><input type="checkbox" id="game_mode"><span></span></label></div>
+  <div class="row"><label><span data-i="app_mapping"></span><div class="hint" data-i="app_mapping_hint"></div></label>
+    <label class="switch"><input type="checkbox" id="app_mapping"><span></span></label></div>
+  <div class="row"><label><span data-i="anticheat"></span><div class="hint" data-i="anticheat_hint"></div></label>
+    <label class="switch"><input type="checkbox" id="anticheat_guard"><span></span></label></div>
+  <div class="row"><label><span data-i="admin"></span><div class="hint" data-i="admin_hint"></div></label>
+    <label class="switch"><input type="checkbox" id="run_as_admin"><span></span></label></div>
+</section>
+
+<section>
+  <h2 data-i="commands"></h2>
+  <div class="hint" style="margin-bottom:8px" data-i="commands_hint"></div>
+  <div id="commands"></div>
+  <div class="row" style="margin-top:8px; border-top:1px solid var(--line); padding-top:12px">
+    <span><span data-i="memory"></span><div class="hint" id="memoryStats"></div></span>
+    <button id="clearMemory" data-i="clear_memory"></button>
+  </div>
+</section>
+
+
+<script>
+const I18N = {
+  ru: {
+    subtitle: "Голосовой ассистент", assistant: "Основные", sec: "с",
+    name: "Имя ассистента", name_hint: "Nova откликается на него в режиме постоянного прослушивания",
+    hotkey: "Сочетание клавиш", hotkey_hint: "Нажмите, чтобы назначить другое", press_keys: "Нажмите сочетание клавиш…",
+    hotkey_mode: "Активация", mode_hold: "Удерживать во время речи", mode_toggle: "Нажать в начале и в конце",
+    wake: "Постоянное прослушивание", wake_hint: "Бета. Nova реагирует, услышав своё имя",
+    silence: "Скрывать при тишине", silence_hint: "Если после вызова ничего не сказано",
+    overlay_style: "Вид панели", os_full: "Индикатор и текст", os_orb: "Только индикатор",
+    overlay_position: "Положение панели", op_top: "Вверху экрана", op_bottom: "Внизу экрана",
+    languages: "Язык", ui_lang: "Язык Nova", ui_lang_hint: "Интерфейс, ответы и имя по умолчанию",
+    stt_lang: "Язык речи", stt_lang_hint: "Автоопределение распознаёт любой язык", any_lang: "Определять автоматически",
+    ai: "Интеллект", claude_sub: "Подписка Pro или Max", codex_sub: "Подписка Plus или Pro",
+    off: "Выключен", off_sub: "Только команды",
+    install: "Установить", login: "Войти", relogin: "Сменить аккаунт", test: "Проверить",
+    checking: "Проверка…", not_installed: "{p} не установлен", not_installed_d: "Установка откроется в отдельном окне",
+    not_logged: "Вход не выполнен", not_logged_d: "Вход выполняется в браузере, через ваш аккаунт",
+    connected: "Подключено", need_node: "Нужен Node.js: установите его с открывшейся страницы и повторите",
+    install_started: "Установка идёт в отдельном окне. По завершении нажмите «Проверить»",
+    login_started: "Завершите вход в браузере и нажмите «Проверить»",
+    test_ok: "Работает · ответ за {s} с", test_fail: "Ошибка: {e}",
+    ai_note: "Nova не хранит пароли и ключи. Запросы идут через официальное приложение — Claude Code или Codex — под вашим аккаунтом.",
+    model: "Модель", haiku_hint: "Haiku отвечает быстрее остальных", codex_model_hint: "Оставьте пустым — будет модель по умолчанию",
+    voice_section: "Распознавание",
+    accuracy: "Модель распознавания", accuracy_hint: "Чем точнее, тем медленнее",
+    acc_base: "Быстрая", acc_small: "Сбалансированная", acc_medium: "Точная", acc_large: "Максимальная точность",
+    device: "Вычисления", dev_auto: "Автоматически", dev_gpu: "Видеокарта NVIDIA", dev_cpu: "Процессор",
+    behaviour: "Поведение",
+    confirm: "Подтверждать необратимые действия",
+    confirm_messages: "Подтверждение сообщений", confirm_messages_hint: "Когда спрашивать перед отправкой",
+    cm_unsure: "Если получатель неочевиден", cm_always: "Всегда", cm_never: "Никогда",
+    sounds: "Звуковые сигналы", sound_style: "Звуки", ss_windows: "Системные, тише", ss_ticks: "Минимальные",
+    game_mode: "Игровой режим", game_mode_hint: "Не показывать панель поверх полноэкранных приложений",
+    app_mapping: "Изучать интерфейс приложений", app_mapping_hint: "Найдя кнопку, ИИ размечает весь экран — дальше Nova нажимает без него. Расходует подписку",
+    anticheat: "Защита от античитов", anticheat_hint: "Не нажимать клавиши и не кликать, пока открыта игра с античитом",
+    admin: "Запуск от администратора", admin_hint: "Доступ к окнам и файлам администратора. Windows спросит разрешение при запуске",
+    commands: "Команды",
+    commands_hint: "Свою команду можно создать голосом: «Запомни рабочий режим: открой Telegram, потом VS Code». Выученные команды Nova сохраняет сама, когда ИИ один раз выполнил просьбу.",
+    memory: "Память", memory_stats: "Правил: {r} · элементов интерфейса: {p} · {kb} КБ", clear_memory: "Сбросить выученное",
+    welcome_done: "Готово. Язык можно сменить в любой момент в разделе «Основные»",
+    own: "Своя", learned: "Выученная", delete: "Удалить", empty: "Команд пока нет", save: "Сохранить", saved: "Сохранено",
+  },
+  en: {
+    subtitle: "Voice assistant", assistant: "General", sec: "s",
+    name: "Assistant name", name_hint: "Nova responds to it when always listening",
+    hotkey: "Keyboard shortcut", hotkey_hint: "Click to assign a different one", press_keys: "Press a key combination…",
+    hotkey_mode: "Activation", mode_hold: "Hold while speaking", mode_toggle: "Press to start and stop",
+    wake: "Always listening", wake_hint: "Beta. Nova responds when it hears its name",
+    silence: "Hide after silence", silence_hint: "When nothing is said after Nova is called",
+    overlay_style: "Panel style", os_full: "Indicator and text", os_orb: "Indicator only",
+    overlay_position: "Panel position", op_top: "Top of the screen", op_bottom: "Bottom of the screen",
+    languages: "Language", ui_lang: "Nova language", ui_lang_hint: "Interface, replies and the default name",
+    stt_lang: "Speech language", stt_lang_hint: "Automatic detection understands any language", any_lang: "Detect automatically",
+    ai: "Intelligence", claude_sub: "Pro or Max plan", codex_sub: "Plus or Pro plan",
+    off: "Off", off_sub: "Commands only",
+    install: "Install", login: "Sign In", relogin: "Switch Account", test: "Test",
+    checking: "Checking…", not_installed: "{p} is not installed", not_installed_d: "Installation opens in a separate window",
+    not_logged: "Not signed in", not_logged_d: "Sign-in happens in your browser, with your own account",
+    connected: "Connected", need_node: "Node.js is required: install it from the page that opened, then try again",
+    install_started: "Installing in a separate window. When it finishes, click Test",
+    login_started: "Finish signing in in your browser, then click Test",
+    test_ok: "Working · replied in {s} s", test_fail: "Error: {e}",
+    ai_note: "Nova stores no passwords or keys. Requests go through the official app — Claude Code or Codex — signed in with your account.",
+    model: "Model", haiku_hint: "Haiku responds fastest", codex_model_hint: "Leave empty to use the default model",
+    voice_section: "Recognition",
+    accuracy: "Recognition model", accuracy_hint: "More accurate means slower",
+    acc_base: "Fast", acc_small: "Balanced", acc_medium: "Accurate", acc_large: "Most accurate",
+    device: "Processing", dev_auto: "Automatic", dev_gpu: "NVIDIA graphics", dev_cpu: "CPU",
+    behaviour: "Behavior",
+    confirm: "Confirm irreversible actions",
+    confirm_messages: "Message confirmation", confirm_messages_hint: "When to ask before sending",
+    cm_unsure: "When the recipient is unclear", cm_always: "Always", cm_never: "Never",
+    sounds: "Sound cues", sound_style: "Sounds", ss_windows: "System, softer", ss_ticks: "Minimal",
+    game_mode: "Game mode", game_mode_hint: "Don't show the panel over full-screen apps",
+    app_mapping: "Learn app layouts", app_mapping_hint: "After finding a button, the AI maps the whole screen so Nova can press the rest without it. Uses your subscription",
+    anticheat: "Anti-cheat protection", anticheat_hint: "No key presses or clicks while a game with anti-cheat is running",
+    admin: "Run as administrator", admin_hint: "Reach administrator windows and files. Windows asks for permission at startup",
+    commands: "Commands",
+    commands_hint: "Create your own command by voice: “Remember work mode: open Telegram, then VS Code.” Learned commands are saved automatically once the AI has completed a request.",
+    memory: "Memory", memory_stats: "{r} rules · {p} interface elements · {kb} KB", clear_memory: "Reset Learned Data",
+    welcome_done: "Done. You can change the language any time under General",
+    own: "Custom", learned: "Learned", delete: "Delete", empty: "No commands yet", save: "Save", saved: "Saved",
+  },
+  zh: {
+    subtitle: "语音助手", assistant: "通用", sec: "秒",
+    name: "助手名称", name_hint: "开启持续聆听时，Nova 会响应这个名称",
+    hotkey: "快捷键", hotkey_hint: "点按以设置其他快捷键", press_keys: "请按下组合键…",
+    hotkey_mode: "唤醒方式", mode_hold: "说话时按住", mode_toggle: "按一下开始，再按一下结束",
+    wake: "持续聆听", wake_hint: "测试版。听到名称时 Nova 会响应",
+    silence: "静默后隐藏", silence_hint: "唤醒后未说话时",
+    overlay_style: "面板样式", os_full: "指示器和文字", os_orb: "仅指示器",
+    overlay_position: "面板位置", op_top: "屏幕顶部", op_bottom: "屏幕底部",
+    languages: "语言", ui_lang: "Nova 语言", ui_lang_hint: "界面、回复和默认名称",
+    stt_lang: "语音语言", stt_lang_hint: "自动检测可识别任何语言", any_lang: "自动检测",
+    ai: "智能", claude_sub: "Pro 或 Max 订阅", codex_sub: "Plus 或 Pro 订阅",
+    off: "关闭", off_sub: "仅内置指令",
+    install: "安装", login: "登录", relogin: "切换账户", test: "测试",
+    checking: "正在检查…", not_installed: "未安装 {p}", not_installed_d: "安装程序将在单独的窗口中打开",
+    not_logged: "尚未登录", not_logged_d: "将在浏览器中使用你的账户登录",
+    connected: "已连接", need_node: "需要 Node.js：请从打开的页面安装后重试",
+    install_started: "正在单独的窗口中安装。完成后点按“测试”",
+    login_started: "在浏览器中完成登录后，点按“测试”",
+    test_ok: "运行正常 · {s} 秒内回复", test_fail: "错误：{e}",
+    ai_note: "Nova 不存储任何密码或密钥。请求通过官方应用（Claude Code 或 Codex）以你的账户发送。",
+    model: "模型", haiku_hint: "Haiku 响应最快", codex_model_hint: "留空则使用默认模型",
+    voice_section: "语音识别",
+    accuracy: "识别模型", accuracy_hint: "越精确，速度越慢",
+    acc_base: "快速", acc_small: "均衡", acc_medium: "精确", acc_large: "最高精度",
+    device: "运算设备", dev_auto: "自动", dev_gpu: "NVIDIA 显卡", dev_cpu: "处理器",
+    behaviour: "行为",
+    confirm: "执行不可撤销的操作前确认",
+    confirm_messages: "消息确认", confirm_messages_hint: "发送前何时询问",
+    cm_unsure: "收件人不明确时", cm_always: "总是", cm_never: "从不",
+    sounds: "提示音", sound_style: "声音", ss_windows: "系统声音（较轻）", ss_ticks: "极简",
+    game_mode: "游戏模式", game_mode_hint: "不在全屏应用上方显示面板",
+    app_mapping: "学习应用界面", app_mapping_hint: "找到按钮后，AI 会标记整个屏幕，之后 Nova 无需 AI 即可点击。会消耗订阅额度",
+    anticheat: "反作弊保护", anticheat_hint: "运行带反作弊的游戏时，不模拟按键或点击",
+    admin: "以管理员身份运行", admin_hint: "可控制管理员窗口和文件。启动时 Windows 会请求许可",
+    commands: "指令",
+    commands_hint: "可以用语音创建自定义指令：“记住 工作模式：打开 Telegram，然后打开 VS Code”。AI 完成一次请求后，Nova 会自动保存学到的指令。",
+    memory: "记忆", memory_stats: "{r} 条规则 · {p} 个界面元素 · {kb} KB", clear_memory: "重置学习数据",
+    welcome_done: "完成。可随时在“通用”中更改语言",
+    own: "自定义", learned: "已学习", delete: "删除", empty: "暂无指令", save: "保存", saved: "已保存",
+  },
+};
+const FIELDS = ["name", "hotkey_mode", "wake_word_enabled", "language", "stt_language", "claude_model", "codex_model",
+                "stt_model", "stt_device", "confirm_dangerous",
+                "confirm_messages", "sounds", "game_mode", "anticheat_guard", "run_as_admin", "app_mapping", "silence_timeout", "overlay_style", "overlay_position",
+                "sound_style"];
+const $ = id => document.getElementById(id);
+let state, hotkey, provider, L = I18N.ru;
+const tr = (k, vars = {}) => (L[k] || I18N.en[k] || k).replace(/\{(\w+)\}/g, (_, v) => vars[v] ?? "");
+
+function applyLang(code) {
+  L = I18N[code] || I18N.en;
+  document.documentElement.lang = code;
+  document.querySelectorAll("[data-i]").forEach(el => el.textContent = tr(el.dataset.i));
+  document.querySelectorAll("#silence_timeout option").forEach(o => o.textContent = `${o.value} ${tr("sec")}`);
+  if (state) renderCommands(state);
+  renderProvider();
+}
+
+function render(s) {
+  state = s;
+  const c = s.config;
+  $("language").innerHTML = Object.entries(s.languages).map(([k, n]) => `<option value="${k}">${n}</option>`).join("");
+  for (const f of FIELDS) {
+    const el = $(f);
+    if (el.type === "checkbox") el.checked = !!c[f]; else el.value = c[f] ?? "";
+  }
+  // First start: the language choice on top, the Windows language already marked.
+  $("welcome").hidden = !!c.onboarded;
+  document.querySelectorAll(".langs button").forEach(b => b.classList.toggle("on", b.dataset.lang === c.language));
+  hotkey = c.hotkey;
+  $("hotkeyBtn").textContent = hotkey;
+  provider = c.brain;
+  applyLang(c.language);
+  refreshStatus();
+}
+
+function renderCommands(s) {
+  const m = s.memory;
+  $("memoryStats").textContent = tr("memory_stats", { r: m.rules, p: m.patterns, kb: Math.ceil(m.bytes / 1024) });
+  const rows = [];
+  for (const [name, steps] of Object.entries(s.macros)) rows.push([name, steps.join(" → "), tr("own")]);
+  for (const [name, skills] of Object.entries(s.learned)) rows.push([name, skills.join(" → "), tr("learned")]);
+  $("commands").innerHTML = rows.length ? rows.map(([n, d, kind]) =>
+    `<div class="cmd"><div>${esc(n)}<small>${kind}: ${esc(d)}</small></div>
+     <button data-del="${esc(n)}">${tr("delete")}</button></div>`).join("")
+    : `<div class="hint">${tr("empty")}</div>`;
+}
+
+function esc(t) { return String(t).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch])); }
+
+// --- AI connection ---------------------------------------------------------
+let status = null;
+const NAMES = { claude: "Claude Code", codex: "Codex" };
+
+function renderProvider() {
+  document.querySelectorAll(".provider").forEach(el => el.classList.toggle("on", el.dataset.p === provider));
+  $("aiBlock").style.display = provider === "off" ? "none" : "";
+  $("claudeModelRow").style.display = provider === "claude" ? "" : "none";
+  $("codexModelRow").style.display = provider === "codex" ? "" : "none";
+  if (provider === "off") return;
+  const dot = $("aiDot");
+  $("aiInstall").style.display = "none";
+  $("aiLogin").style.display = "none";
+  $("aiTest").style.display = "none";
+  if (!status) { dot.className = "dot"; $("aiTitle").textContent = tr("checking"); $("aiDetail").textContent = ""; return; }
+  if (!status.installed) {
+    dot.className = "dot bad";
+    $("aiTitle").textContent = tr("not_installed", { p: NAMES[provider] });
+    $("aiDetail").textContent = tr("not_installed_d");
+    $("aiInstall").style.display = "";
+    $("aiTest").style.display = "";
+  } else if (!status.logged_in) {
+    dot.className = "dot warn";
+    $("aiTitle").textContent = tr("not_logged");
+    $("aiDetail").textContent = tr("not_logged_d");
+    $("aiLogin").textContent = tr("login");
+    $("aiLogin").style.display = "";
+    $("aiTest").style.display = "";
+  } else {
+    dot.className = "dot ok";
+    $("aiTitle").textContent = `${tr("connected")} · ${NAMES[provider]}`;
+    $("aiDetail").textContent = [status.account, status.plan && status.plan.toUpperCase()].filter(Boolean).join(" · ");
+    $("aiLogin").textContent = tr("relogin");
+    $("aiLogin").style.display = "";
+    $("aiTest").style.display = "";
+  }
+}
+
+async function refreshStatus() {
+  if (provider === "off") return renderProvider();
+  status = null;
+  renderProvider();
+  const asked = provider;
+  let s;
+  try { s = await pywebview.api.ai_status(asked); } catch (e) { s = { installed: false, logged_in: false }; }
+  if (asked === provider) { status = s; renderProvider(); }
+}
+
+document.querySelectorAll(".provider").forEach(el => el.onkeydown = e => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); }
+});
+document.querySelectorAll(".provider").forEach(el => el.onclick = () => {
+  provider = el.dataset.p;
+  refreshStatus();
+  persist({ brain: provider });
+});
+$("aiInstall").onclick = async () => {
+  const r = await pywebview.api.ai_install(provider);
+  $("aiDetail").textContent = tr(r === "need_node" ? "need_node" : "install_started");
+};
+$("aiLogin").onclick = async () => {
+  await pywebview.api.ai_login(provider);
+  $("aiDetail").textContent = tr("login_started");
+};
+$("aiTest").onclick = async () => {
+  $("aiTest").disabled = true;
+  $("aiDetail").textContent = tr("checking");
+  try {
+    const s = await pywebview.api.ai_status(provider);
+    status = s;
+    renderProvider();
+    if (s.installed && s.logged_in) {
+      const r = await pywebview.api.ai_test(provider);
+      $("aiDetail").textContent = r.ok ? tr("test_ok", { s: r.seconds }) : tr("test_fail", { e: r.error });
+    }
+  } catch (e) {
+    $("aiDetail").textContent = tr("test_fail", { e: String(e) });
+  } finally {
+    $("aiTest").disabled = false;  // never stuck on "Checking…"
+  }
+};
+
+// --- the rest --------------------------------------------------------------
+$("language").onchange = async () => {
+  const lang = $("language").value, names = Object.values(state.default_names || {});
+  // The default name follows the language ("Нова" -> "Nova"); a name you typed stays.
+  if (!$("name").value.trim() || names.includes($("name").value.trim())) $("name").value = state.default_names[lang] || $("name").value;
+  applyLang(lang);
+  await persist({ language: lang, name: $("name").value.trim() });
+};
+document.querySelectorAll(".langs button").forEach(b => b.onclick = async () => {
+  $("language").value = b.dataset.lang;
+  await $("language").onchange();            // the interface, replies and default name follow
+  document.querySelectorAll(".langs button").forEach(x => x.classList.toggle("on", x === b));
+  await persist({ onboarded: true });
+  $("welcomeHint").textContent = tr("welcome_done");
+  setTimeout(() => { $("welcome").hidden = true; }, 1600);
+});
+$("hotkeyBtn").onclick = async () => {
+  $("hotkeyBtn").textContent = tr("press_keys");
+  const combo = await pywebview.api.record_hotkey();
+  if (!combo) { $("hotkeyBtn").textContent = hotkey; return; }  // nothing pressed in time
+  if (await persist({ hotkey: combo })) { $("hotkeyBtn").textContent = hotkey; return; }  // invalid: keep the old one
+  hotkey = combo;
+  $("hotkeyBtn").textContent = hotkey;
+};
+$("clearMemory").onclick = async () => { state = await pywebview.api.clear_memory(); renderCommands(state); };
+$("commands").onclick = async e => {
+  const name = e.target.dataset.del;
+  if (name) { state = await pywebview.api.delete_command(name); renderCommands(state); }
+};
+// Every change is saved right away: no Save button. Text fields wait until you pause typing.
+let savedTimer, typingTimers = {};
+function flash(problem) {
+  const el = $("saved");
+  el.textContent = problem || tr("saved");
+  el.classList.toggle("warn", !!problem);
+  el.classList.add("on");
+  clearTimeout(savedTimer);
+  savedTimer = setTimeout(() => el.classList.remove("on"), problem ? 4000 : 1200);
+}
+async function persist(partial) {
+  const problem = await pywebview.api.save(partial);
+  // Refused: show what is really saved — but never yank a name out from under the user's typing.
+  if (problem && !("name" in partial)) render(await pywebview.api.get_state());
+  else Object.assign(state.config, partial);
+  flash(problem);
+  return problem;
+}
+for (const f of FIELDS) {
+  if (f === "language") continue;  // has its own handler (the name may change with it)
+  const el = $(f);
+  const read = () => (el.type === "checkbox" ? el.checked : el.value);
+  if (el.type === "text") {
+    el.addEventListener("input", () => {
+      clearTimeout(typingTimers[f]);
+      typingTimers[f] = setTimeout(() => persist({ [f]: read().trim() }), 600);
+    });
+  } else {
+    el.addEventListener("change", () => persist({ [f]: read() }));
+  }
+}
+window.addEventListener("pywebviewready", async () => {
+  render(await pywebview.api.get_state());
+  unselect();
+});
+// Windows hands the page focus when the window is shown, which lands on the first
+// field with its text selected. Undo that right after every opening.
+function unselect() {
+  for (const ms of [0, 80, 250]) setTimeout(() => {
+    const a = document.activeElement;
+    if (a && a !== document.body) a.blur();
+    window.getSelection().removeAllRanges();
+  }, ms);
+}
+document.addEventListener("visibilitychange", async () => {
+  if (document.hidden) return;
+  unselect();
+  // Things change while the window is hidden ("run as administrator" declined, the
+  // name set by voice): show the real state every time it opens.
+  render(await pywebview.api.get_state());
+  unselect();
+});
+</script>
+</body>
+</html>

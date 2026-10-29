@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  /* Nova overlay — liquid glass, deep-sea navy + soft neon mint, Siri-like motion.
+     The window is exactly the panel (Windows 11 rounds its corners and adds the shadow).
+     The .glass layers show a live, blurred view of what's behind the window, refreshed
+     from Python a few times a second (the window is excluded from that capture). */
+  @property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  :root { --mint: #5cf2bd; --aqua: #46d7e6; --blue: #2f6fe0; --text: #f2f9ff; --muted: #a9bdd8;
+          --level: 0; --ease: cubic-bezier(.2, .9, .25, 1); --spring: cubic-bezier(.2, 1.25, .35, 1); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0a1a33; user-select: none;
+    font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+    -webkit-font-smoothing: antialiased; }
+
+  .glass { position: absolute; inset: 0; background-size: cover; background-position: center;
+    transform: scale(1.06); transition: opacity .35s ease; }
+  #g2 { opacity: 0; }
+  .stage { position: absolute; inset: 0; }
+  .tint { position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 160% at 0% 50%, rgba(92,242,189,calc(.10 + var(--level) * .16)), transparent 55%),
+      linear-gradient(180deg, rgba(16, 38, 74, .50), rgba(5, 14, 30, .66)); }
+  .sheen { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,.03) 45%, transparent 62%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.28), inset 0 0 0 1px rgba(255,255,255,.07); }
+  /* Flowing light along the edge — brighter when Nova hears you, faster while she thinks. */
+  .edge { position: absolute; inset: 0; padding: 1.5px; pointer-events: none;
+    background: conic-gradient(from var(--spin) at 50% 50%, transparent 0deg, rgba(92,242,189,.95) 50deg,
+      rgba(70,215,230,.85) 95deg, rgba(47,111,224,.55) 140deg, transparent 190deg, transparent 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: calc(.30 + var(--level) * .70); animation: spin 5s linear infinite; }
+  .thinking .edge { animation-duration: 1.6s; opacity: .95; }
+  .error .edge { filter: hue-rotate(150deg) saturate(1.4); }
+  @keyframes spin { to { --spin: 360deg; } }
+
+  .content { position: absolute; inset: 0; display: flex; align-items: center; gap: 14px; padding: 0 12px 0 11px;
+    color: var(--text); opacity: 0; transform: translateY(var(--from, -10px)) scale(.985); filter: blur(4px);
+    transition: opacity .32s var(--ease), transform .5s var(--spring), filter .32s var(--ease); }
+  .shown .content { opacity: 1; transform: none; filter: none; }
+  .leaving .content { opacity: 0; transform: scale(.985); filter: blur(3px); transition: all .2s ease; }
+
+  /* The orb: three coloured clouds flowing inside a sphere. */
+  .orb { position: relative; width: 50px; height: 50px; flex: none; border-radius: 50%; overflow: hidden;
+    background: radial-gradient(circle at 50% 55%, #0b2f45, #06162a 70%);
+    transform: scale(calc(1 + var(--level) * .16)); transition: transform .12s ease-out;
+    box-shadow: 0 0 calc(10px + var(--level) * 22px) rgba(92,242,189,calc(.25 + var(--level) * .45)),
+                inset 0 0 0 1px rgba(255,255,255,.14); }
+  .orb i { position: absolute; width: 80%; height: 80%; border-radius: 50%; filter: blur(6px);
+    mix-blend-mode: screen; animation: drift 7s ease-in-out infinite; }
+  .orb i:nth-child(1) { background: radial-gradient(circle, #6ff7c8 0%, rgba(111,247,200,0) 68%); left: -6%; top: 4%; }
+  .orb i:nth-child(2) { background: radial-gradient(circle, #4fdcec 0%, rgba(79,220,236,0) 68%); right: -10%; top: 18%;
+    animation-duration: 9s; animation-direction: reverse; }
+  .orb i:nth-child(3) { background: radial-gradient(circle, #3a7cf0 0%, rgba(58,124,240,0) 70%); left: 14%; bottom: -16%;
+    animation-duration: 11s; }
+  .orb b { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle at 34% 26%, rgba(255,255,255,.85) 0 5%, rgba(255,255,255,0) 20%),
+                radial-gradient(circle at 50% 120%, rgba(92,242,189,.35), rgba(92,242,189,0) 50%); }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    33% { transform: translate(14%, -10%) scale(1.12) rotate(40deg); }
+    66% { transform: translate(-10%, 12%) scale(.92) rotate(-30deg); } }
+  .listening .orb i { animation-duration: 3.2s; }
+  .thinking .orb i { animation-duration: 1.3s; }
+  .speaking .orb i { animation-duration: 2.4s; }
+  .loading .orb { filter: saturate(.55) brightness(.85); }
+  .error .orb i:nth-child(1) { background: radial-gradient(circle, #ff8c9a, rgba(255,140,154,0) 68%); }
+  .error .orb i:nth-child(2) { background: radial-gradient(circle, #ffb27a, rgba(255,178,122,0) 68%); }
+
+  .text { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; }
+  .label { font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--mint);
+    opacity: .9; }
+  .error .label { color: #ff8c9a; }
+  .main { font-size: 16.5px; font-weight: 450; line-height: 1.27; letter-spacing: -.005em; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    transition: opacity .22s var(--ease), transform .3s var(--ease), filter .3s var(--ease); }
+  .main.swap { opacity: 0; transform: translateY(4px); filter: blur(3px); }
+  /* A question or a long answer: up to six lines, never hidden behind the orb-only mode. */
+  .tall .main { -webkit-line-clamp: 6; font-size: 15.5px; }
+  .tall .content { align-items: center; }
+
+  /* Close: always reachable, quiet until you point at it. */
+  .close { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+    display: grid; place-items: center; color: rgba(255,255,255,.55); background: rgba(255,255,255,.07);
+    transition: background .15s, color .15s, transform .1s; position: relative; z-index: 5; }
+  .close:hover { background: rgba(255,255,255,.18); color: #fff; }
+  .close:active { transform: scale(.9); }
+  .close svg { width: 10px; height: 10px; }
+
+  /* Compact: just the orb (click it to close). */
+  .compact .content { justify-content: center; padding: 0; }
+  .compact .text, .compact .close { display: none; }
+  .compact .orb { cursor: pointer; }
+
+  /* Hidden: freeze every animation so the overlay costs nothing between calls. */
+  .asleep *, .asleep *::before, .asleep *::after { animation-play-state: paused !important; }
+</style>
+</head>
+<body>
+<div class="glass" id="g1"></div><div class="glass" id="g2"></div>
+<div class="stage" id="stage">
+  <div class="tint"></div>
+  <div class="sheen"></div>
+  <div class="edge"></div>
+  <div class="content">
+    <div class="orb" id="orb"><i></i><i></i><i></i><b></b></div>
+    <div class="text">
+      <div class="label" id="label">Nova</div>
+      <div class="main" id="main"></div>
+    </div>
+    <button class="close" id="close" title="Закрыть (Esc)">
+      <svg viewBox="0 0 10 10"><path d="M1 1 9 9M9 1 1 9" stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round"/></svg></button>
+  </div>
+</div>
+<script>
+  const ALL_LABELS = {
+    ru: { listening: "Слушаю", thinking: "Думаю", speaking: "Nova", loading: "Запуск", error: "Ошибка", ready: "Nova" },
+    en: { listening: "Listening", thinking: "Thinking", speaking: "Nova", loading: "Starting", error: "Error", ready: "Nova" },
+    zh: { listening: "正在听", thinking: "思考中", speaking: "Nova", loading: "启动中", error: "错误", ready: "Nova" },
+  };
+  let LABELS = ALL_LABELS.ru, current = "", compact = false, state = "idle", shown = false, leaving = false,
+      tall = false;
+  const stage = document.getElementById("stage"), main = document.getElementById("main");
+  const root = document.documentElement.style;
+
+  function closeNow() { if (window.pywebview) pywebview.api.close(); }
+  document.getElementById("close").onclick = closeNow;
+  document.getElementById("orb").onclick = () => { if (compact) closeNow(); };
+
+  function setLang(code) {
+    LABELS = ALL_LABELS[code] || ALL_LABELS.en;
+    document.getElementById("close").title = { ru: "Закрыть (Esc)", en: "Close (Esc)", zh: "关闭 (Esc)" }[code] || "Close";
+  }
+  // Live glass: crossfade between two layers so a new frame never flickers in.
+  let front = 1;
+  function setBackdrop(url) {
+    const next = document.getElementById(front === 1 ? "g2" : "g1");
+    const prev = document.getElementById(front === 1 ? "g1" : "g2");
+    next.style.backgroundImage = url ? `url(${url})` : "";
+    next.style.opacity = 1; prev.style.opacity = 0;
+    front = front === 1 ? 2 : 1;
+  }
+  function setMode(style, position) {
+    compact = style === "orb";
+    root.setProperty("--from", position === "bottom" ? "10px" : "-10px");
+    paint();
+  }
+  function paint() {
+    stage.className = "stage " + state + (compact && !tall ? " compact" : "") + (tall ? " tall" : "") +
+      (shown ? " shown" : "") + (leaving ? " leaving" : "");
+  }
+  let asleep = false, running = false;
+  function sleep(on) {
+    asleep = on;
+    document.documentElement.classList.toggle("asleep", on);
+    if (!on && !running) { running = true; requestAnimationFrame(tick); }
+  }
+  function enter() { sleep(false); leaving = false; shown = false; paint();
+    requestAnimationFrame(() => requestAnimationFrame(() => { shown = true; paint(); })); }
+  function leave() { leaving = true; paint(); }
+
+  function setState(s, text, big) {
+    state = s;
+    tall = !!big;
+    paint();
+    document.getElementById("label").textContent = LABELS[s] || "Nova";
+    text = text || "";
+    if (s !== "listening") target = 0;
+    if (text === current) return;
+    current = text;
+    main.classList.add("swap");  // flow from the old text into the new one
+    setTimeout(() => { main.textContent = text; main.classList.remove("swap"); }, 150);
+  }
+
+  // Voice level, smoothed so the orb and the glow breathe instead of jitter.
+  let target = 0, level = 0;
+  function setLevel(v) { target = Math.min(1, Math.sqrt(Math.max(0, v) * 18)); }
+  function tick() {
+    if (asleep) { running = false; return; }  // no frames at all while hidden
+    level += (target - level) * (target > level ? .35 : .08);
+    target *= .94;
+    root.setProperty("--level", level.toFixed(3));
+    requestAnimationFrame(tick);
+  }
+  running = true;
+  tick();
+</script>
+</body>
+</html>

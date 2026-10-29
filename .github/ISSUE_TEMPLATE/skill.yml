@@ -1,0 +1,22 @@
+name: Skill idea / Идея команды
+description: Something Nova should be able to do / Что Nova должна уметь
+labels: [skill-idea]
+body:
+  - type: input
+    id: phrase
+    attributes:
+      label: Phrase / Фраза
+      placeholder: "Nova, what's the weather"
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: What should happen / Что должно произойти
+    validations:
+      required: true
+  - type: dropdown
+    id: help
+    attributes:
+      label: Will you build it? / Сделаете сами?
+      options: ["Yes / Да", "With help / С помощью", "No / Нет"]

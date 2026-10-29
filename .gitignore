@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+*.spec
+# Never commit user data or models
+*.log
+*.db
+*.wav
+models/
+.claude/

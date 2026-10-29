@@ -1,0 +1,20 @@
+# Tested versions. Upper bounds stop a future major release (or a hijacked package
+# pushing one) from landing unreviewed; bump them after testing.
+faster-whisper>=1.2.1,<2
+ctranslate2>=4.8,<5
+onnxruntime>=1.22,<2
+huggingface-hub>=1.0,<3
+sounddevice>=0.5,<1
+numpy>=2.0,<3
+# Exact: Nova re-installs its Windows hook through this library's internals (nova/guard.py).
+keyboard==0.13.5
+uiautomation>=2.0.29,<3
+comtypes>=1.4,<2
+pycaw>=20260927
+mss>=10.0,<11
+rapidfuzz>=3.14,<4
+pywebview>=6.2,<7
+pystray>=0.19.5,<0.20
+pillow>=12.0,<13
+opencv-python-headless>=5.0,<6
+psutil>=7.0,<8

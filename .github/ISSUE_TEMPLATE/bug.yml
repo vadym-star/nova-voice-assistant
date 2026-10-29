@@ -1,0 +1,34 @@
+name: Bug / Баг
+description: Nova did something wrong / Nova сделала что-то не то
+labels: [bug]
+body:
+  - type: input
+    id: said
+    attributes:
+      label: What you said / Что вы сказали
+      placeholder: "Nova, open Telegram"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected / Что ожидали
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened / Что произошло
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log / Лог
+      description: The matching lines from %APPDATA%\Nova\nova.log. Remove anything private (message texts, names). / Уберите личное.
+      render: text
+  - type: input
+    id: system
+    attributes:
+      label: System / Система
+      placeholder: Windows 11 24H2, RTX 3060, Python 3.13, Nova 0.1.0
