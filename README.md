@@ -2,7 +2,7 @@
 
 <img src="nova/web/nova.png" width="96" alt="Nova">
 
-# Nova
+# Nova Voice Assistant
 
 **A free, open-source voice assistant for Windows.**
 Hold a shortcut or just say its name, speak, and Nova does it.
@@ -55,8 +55,8 @@ shortcut / name ─► microphone ─► Whisper (on your PC) ─┬─► your 
 **By hand** (for developers): you need **Windows 10 (2004 or newer) or 11**, **Python 3.11 or newer**, and the [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (already part of Windows 11).
 
 ```powershell
-git clone https://github.com/vadym-star/nova.git
-cd nova
+git clone https://github.com/vadym-star/nova-voice-assistant.git
+cd nova-voice-assistant
 pip install -r requirements.txt
 python -m nova            # or double-click Nova.bat to start without a console
 ```

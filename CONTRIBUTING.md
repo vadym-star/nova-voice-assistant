@@ -5,8 +5,8 @@ Thanks for stopping by! Every kind of help counts: bug reports, ideas, new skill
 ## Developer setup
 
 ```powershell
-git clone https://github.com/vadym-star/nova.git
-cd nova
+git clone https://github.com/vadym-star/nova-voice-assistant.git
+cd nova-voice-assistant
 pip install -r requirements.txt pytest
 python -m pytest tests          # fast: routing, safety, wake word; no microphone or models
 python tools/voice_bench.py     # slow (~5 min): Windows voices -> Whisper -> router, plus timings

@@ -2,7 +2,7 @@
 
 <img src="nova/web/nova.png" width="96" alt="Nova">
 
-# Nova
+# Nova Voice Assistant
 
 **Бесплатный голосовой ассистент для Windows с открытым кодом.**
 Зажмите сочетание клавиш или просто позовите по имени, скажите, что нужно, и Nova это сделает.
@@ -32,8 +32,8 @@
 **Вручную** (для разработчиков): нужны **Windows 10 (2004 или новее) или 11**, **Python 3.11 или новее** и [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (в Windows 11 уже есть).
 
 ```powershell
-git clone https://github.com/vadym-star/nova.git
-cd nova
+git clone https://github.com/vadym-star/nova-voice-assistant.git
+cd nova-voice-assistant
 pip install -r requirements.txt
 python -m nova            # или Nova.bat — запуск без консоли
 ```

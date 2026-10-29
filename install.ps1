@@ -23,7 +23,7 @@ function Fail($ru, $en) {
 }
 
 Write-Host ""
-Write-Host "  Nova — voice assistant for Windows" -ForegroundColor Green
+Write-Host "  Nova Voice Assistant" -ForegroundColor Green
 Say "  Установка в $Target" "  Installing to $Target"
 
 # --- Python ------------------------------------------------------------------------------
@@ -119,8 +119,8 @@ if (Ask "Запускать Nova вместе с Windows?" "Start Nova with Wind
 $Key = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Nova"
 $Version = (Select-String -Path (Join-Path $Target "nova\__init__.py") -Pattern '__version__ = "(.+)"').Matches[0].Groups[1].Value
 New-Item -Force -Path $Key | Out-Null
-$props = @{ DisplayName = "Nova"; DisplayVersion = $Version; Publisher = "VadymStar"; DisplayIcon = $Icon
-            InstallLocation = $Target; NoModify = 1; NoRepair = 1; URLInfoAbout = "https://github.com/vadym-star/nova"
+$props = @{ DisplayName = "Nova Voice Assistant"; DisplayVersion = $Version; Publisher = "VadymStar"; DisplayIcon = $Icon
+            InstallLocation = $Target; NoModify = 1; NoRepair = 1; URLInfoAbout = "https://github.com/vadym-star/nova-voice-assistant"
             UninstallString = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$Target\uninstall.ps1`"" }
 foreach ($k in $props.Keys) { Set-ItemProperty -Path $Key -Name $k -Value $props[$k] }
 
