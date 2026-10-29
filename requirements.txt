@@ -3,7 +3,7 @@
 faster-whisper>=1.2.1,<2
 ctranslate2>=4.8,<5
 onnxruntime>=1.22,<2
-huggingface-hub>=1.0,<3
+huggingface-hub>=2.3.0,<3
 sounddevice>=0.5,<1
 numpy>=2.0,<3
 # Exact: Nova re-installs its Windows hook through this library's internals (nova/guard.py).
