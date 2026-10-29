@@ -42,5 +42,9 @@ def no_desktop(monkeypatch):
     monkeypatch.setattr(screen, "bring_to_front", lambda hwnd: True)
     monkeypatch.setattr(screen, "click_at", _blocked)
     monkeypatch.setattr(screen, "still_there", lambda hwnd, shot: True)  # fake windows in tests
+    # The window in front is whatever runs the tests (a console on CI): pretend a plain app,
+    # so the "typing into a terminal" check doesn't depend on the machine. Tests that need
+    # another app set their own.
+    monkeypatch.setattr(screen, "app_name", lambda hwnd: "notepad.exe")
     monkeypatch.setattr(messaging, "_open_telegram", _blocked)
     monkeypatch.setattr("nova.router._restore_focus", lambda hwnd: None)
