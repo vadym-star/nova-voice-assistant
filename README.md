@@ -24,7 +24,7 @@ Say **“Nova, open Telegram”**, **“Nova, volume 30”**, **“Nova, click S
 - 🎙️ **Two ways to call it.** Hold `Ctrl+Alt+Space` (configurable), or just say the name. The name is yours to pick; the default is “Nova”.
 - ⚡ **Instant commands, no AI, offline.** Open apps, sites and folders, close windows, click buttons by name, press keys, type text, scroll, set the volume, control media, take screenshots, search Google or YouTube, tell the time and date, lock or shut down the PC.
 - 👁️ **Sees the screen when asked.** “Look here, what's this error?” reads the area around your mouse. “Click Accept” finds a button even where Windows can't see it, such as inside games, and remembers what it looks like and where it sits. It also maps the rest of that screen in the background, so next time it presses any of those buttons at once, without the AI.
-- 💬 **Telegram messages.** It finds the chat and learns nicknames (“Alex” is “Alexandrinator” in Telegram, it asks once and remembers). It never sends to a guessed chat without asking.
+- 💬 **Messages in any messenger.** In Telegram it finds the chat by itself and learns nicknames (“Alex” is “Alexandrinator”, it asks once and remembers); in Discord, WhatsApp or any other app it works through the app's own window step by step and learns its buttons. It never sends to a guessed chat without asking.
 - 🧩 **Your own commands.** “Remember work mode: open Telegram, then VS Code, then volume 30.” After that, “work mode” runs the whole list.
 - 📚 **Learns.** When the AI has solved a request once, Nova repeats it next time instantly, without the AI.
 - 🎮 **Stays out of your game.** Nova presses buttons the way a screen reader does, without moving the mouse or stealing focus where the app allows it, and puts your window back afterwards. No panel over full-screen games. While a game with anti-cheat is running, it sends no keystrokes or clicks at all.
@@ -116,14 +116,13 @@ Windows doesn't let normal apps control windows that run as administrator (Task 
 ## Limitations
 
 - Windows only.
-- Messages: Telegram Desktop for now.
 - Always listening is in beta. It works best with a decent microphone and the name said at the start.
 - The AI needs a Claude or ChatGPT subscription and the official CLI. Nova uses them as you would, under your account and their terms. Nova is not affiliated with Anthropic or OpenAI.
 
 ## Contributing
 
-The easiest way to help is a new skill: one Python file in `nova/skills/`. See [CONTRIBUTING.md](CONTRIBUTING.md). Ideas: more messengers, Spotify, a local model through Ollama, an installer, more languages.
+The easiest way to help is a new skill: one Python file in `nova/skills/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-Developed by [VadymStar](https://github.com/vadym-star). [MIT](LICENSE). Inspired by [Atticus](https://github.com/SaarthurR/atticus-mac) for macOS.
+Developed by [VadymStar](https://github.com/vadym-star). [MIT](LICENSE).

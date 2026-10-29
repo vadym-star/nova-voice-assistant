@@ -11,7 +11,7 @@
 - Instant skills without the AI: apps, sites and folders, windows, buttons by name, keys, typing, scrolling, volume, media, screenshots, search, time and date, lock and power.
 - Screen understanding on request (“look here”), visual clicks that are remembered with their place in the window (found even when a button glows or pulses), background mapping of app screens, and “wrong one” to correct them.
 - Finds what's installed anywhere: Start menu, Steam and Epic games, programs registered in Windows, desktop shortcuts, and install folders on every disk; any grammatical case (“доту” → Dota 2). When a step fails, the AI tries another way.
-- Telegram messages with nickname memory and confirmation when the chat is a guess.
+- Messages in any messenger: Telegram with automatic chat search and nickname memory, other apps step by step through their window; always a confirmation when the chat is a guess.
 - Your own voice macros. Learned shortcuts for requests the AI solved once.
 - Claude (Claude Code) or ChatGPT (Codex CLI) through your subscription, with install, sign-in and test buttons in Settings.
 - Background actions that put your window back. No panel over full-screen games.

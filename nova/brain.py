@@ -57,8 +57,10 @@ Rules:
   as "app" to click / type_text / press_key instead of opening it: Nova then works in the background
   when the program allows it, and otherwise shows it briefly and returns the user to where they were.
   For typing into a specific field, pass "field" (e.g. "адрес", "поиск").
-- To send someone a message, ALWAYS use the send_message skill (it finds and verifies the chat itself);
-  never send messages by typing and pressing Enter yourself.
+- To send someone a message in Telegram, use the send_message skill (it finds and verifies the chat
+  itself). In any other messenger (Discord, WhatsApp, Viber, Slack...) operate its window step by step:
+  open it, find and open the chat, look at the screen to check it's the right one, type the text, and
+  put a confirm right before the step that sends.
 - Before an irreversible step that affects other people (sending a message or email, posting, paying),
   (except send_message, which checks with the user itself) put
   {{"skill": "confirm", "args": {{"question": "..."}}}} right before it, with the exact text in the
