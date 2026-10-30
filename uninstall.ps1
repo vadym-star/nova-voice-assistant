@@ -1,17 +1,20 @@
 ﻿# Removes Nova installed by install.ps1. Asks before deleting settings, memory and models.
 
+param([switch]$Quiet)  # -Quiet: no questions; settings, memory and models are kept
+
 $ErrorActionPreference = "Continue"
 $Target = Join-Path $env:LOCALAPPDATA "Programs\Nova"
 $Data = Join-Path $env:APPDATA "Nova"
 $Ru = (Get-Culture).TwoLetterISOLanguageName -in @("ru", "uk", "be", "kk")
 function Say($ru, $en) { if ($Ru) { Write-Host $ru } else { Write-Host $en } }
-function Ask($ru, $en) {
+function Ask($ru, $en, $quietAnswer = $false) {
+    if ($Quiet) { return $quietAnswer }
     $q = if ($Ru) { "$ru [д/Н]" } else { "$en [y/N]" }
     return ((Read-Host $q) -match "^(y|yes|д|да)$")
 }
 
 Write-Host ""
-if (-not (Ask "Удалить Nova?" "Uninstall Nova?")) { exit 0 }
+if (-not (Ask "Удалить Nova?" "Uninstall Nova?" $true)) { exit 0 }
 
 # Stop it first: files in use can't be deleted.
 Get-CimInstance Win32_Process -Filter "Name='pythonw.exe' OR Name='python.exe'" |

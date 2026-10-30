@@ -3,6 +3,8 @@
 # No administrator rights needed. Run again to update.
 #   powershell -ExecutionPolicy Bypass -File install.ps1   (or double-click "Install Nova.bat")
 
+param([switch]$Quiet)  # -Quiet: no questions (Start-menu + desktop shortcut, no autostart, start Nova)
+
 $ErrorActionPreference = "Stop"
 $Source = $PSScriptRoot
 $Target = Join-Path $env:LOCALAPPDATA "Programs\Nova"
@@ -12,14 +14,15 @@ $Ru = (Get-Culture).TwoLetterISOLanguageName -in @("ru", "uk", "be", "kk")
 
 function Say($ru, $en) { if ($Ru) { Write-Host $ru } else { Write-Host $en } }
 function Step($ru, $en) { Write-Host ""; if ($Ru) { Write-Host "==> $ru" -ForegroundColor Cyan } else { Write-Host "==> $en" -ForegroundColor Cyan } }
-function Ask($ru, $en) {
+function Ask($ru, $en, $quietAnswer = $true) {
+    if ($Quiet) { return $quietAnswer }
     $q = if ($Ru) { "$ru [Д/н]" } else { "$en [Y/n]" }
     $a = Read-Host $q
     return ($a -eq "" -or $a -match "^(y|yes|д|да)$")
 }
 function Fail($ru, $en) {
     Write-Host ""; if ($Ru) { Write-Host $ru -ForegroundColor Red } else { Write-Host $en -ForegroundColor Red }
-    Read-Host "Enter"; exit 1
+    if (-not $Quiet) { Read-Host "Enter" }; exit 1
 }
 
 Write-Host ""
@@ -68,7 +71,7 @@ if (-not $hasWebView) {
 # --- Stop a running Nova, copy the files ------------------------------------------------
 Step "Копирую файлы" "Copying files"
 Get-CimInstance Win32_Process -Filter "Name='pythonw.exe' OR Name='python.exe'" |
-    Where-Object { $_.CommandLine -match "-m nova" -and $_.ExecutablePath -like "$Target*" } |
+    Where-Object { $_.CommandLine -match "-m nova" -and $_.CommandLine -like "*$Target*" } |  # the venv launcher and its child
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
 New-Item -ItemType Directory -Force -Path $Target | Out-Null
 foreach ($item in @("nova", "requirements.txt", "LICENSE", "README.md", "README.ru.md", "uninstall.ps1")) {
@@ -111,7 +114,7 @@ if (Ask "Ярлык на рабочем столе?" "Desktop shortcut?") {
     Make-Link (Join-Path ([Environment]::GetFolderPath("Desktop")) "Nova.lnk") "-m nova" "Nova voice assistant"
 }
 $Startup = Join-Path ([Environment]::GetFolderPath("Startup")) "Nova.lnk"
-if (Ask "Запускать Nova вместе с Windows?" "Start Nova with Windows?") {
+if (Ask "Запускать Nova вместе с Windows?" "Start Nova with Windows?" $false) {
     Make-Link $Startup "-m nova" "Nova voice assistant"
 } elseif (Test-Path $Startup) { Remove-Item $Startup }
 
@@ -128,4 +131,4 @@ Write-Host ""
 Say "Готово! Nova установлена." "Done! Nova is installed."
 if (Ask "Запустить Nova сейчас?" "Start Nova now?") { Start-Process $PythonW -ArgumentList "-m nova" -WorkingDirectory $Target }
 Say "Nova появится в трее (у часов). Правый клик → Настройки." "Nova appears in the tray (next to the clock). Right-click → Settings."
-Read-Host "Enter"
+if (-not $Quiet) { Read-Host "Enter" }
